@@ -7,7 +7,7 @@ using UnityEngine.AI;
 public class AICommander : MonoBehaviour
 {
     Camera cam;
-    [SerializeField] List<AIMove> agents;
+    [SerializeField] List<AIController> agents;
 
     // Start is called before the first frame update
     void Start()
@@ -23,11 +23,19 @@ public class AICommander : MonoBehaviour
             
             if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftShift))
             {
-                QueueCommand(SampleScreenPos());
+                foreach(AIController controller in agents)
+                {
+                    QueueCommand(controller, SampleScreenPos(), controller.selectedActionType);
+                    
+                    
+                }
             }
             else if (Input.GetMouseButtonDown(0))
             {
-                QueuePriorityCommand(SampleScreenPos());
+                foreach (AIController controller in agents)
+                {
+                    QueuePriorityCommand(controller, SampleScreenPos(), controller.selectedActionType);
+                }
             }
         }
     }
@@ -43,27 +51,34 @@ public class AICommander : MonoBehaviour
         return nHit;
     }
 
-    void QueueCommand(NavMeshHit navHit)
+    void QueueCommand(AIController agent, NavMeshHit navHit, IAction actionType)
     {
-        foreach (AIMove agent in agents)
+        if (agent.selected)
         {
-            if (agent.selected)
-            {
-                agent.actionQueue.Enqueue(navHit.position);
-            }
+            agent.actionQueue.Enqueue(actionType);
+        }
+
+        // Basic FSM. Find a better way to do this soon.
+        if (agent.selectedActionType.GetType() == typeof(AIMove))
+        {
+            AIMove move = (AIMove)agent.selectedActionType;
+            move.targetDestination = navHit.position;
         }
     }
 
-    void QueuePriorityCommand(NavMeshHit navHit)
+    void QueuePriorityCommand(AIController agent, NavMeshHit navHit, IAction actionType)
     {
-        foreach (AIMove agent in agents)
+        if (agent.selected)
         {
-            if (agent.selected)
-            {
-                agent.actionQueue.Clear();
-                agent.actionQueue.Enqueue(navHit.position);
-            }
+            agent.actionQueue.Clear();
+            agent.actionQueue.Enqueue(actionType);
+        }
+
+        // Basic FSM. Find a better way to do this soon.
+        if (agent.selectedActionType.GetType() == typeof(AIMove))
+        {
+            AIMove move = (AIMove)agent.selectedActionType;
+            move.targetDestination = navHit.position;
         }
     }
-    
 }
