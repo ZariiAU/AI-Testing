@@ -5,7 +5,6 @@ using UnityEngine.AI;
 
 public class AIMove : MonoBehaviour, IAction
 {
-    private bool actionComplete;
     public Vector3 targetDestination;
     public NavMeshAgent navMeshAgent;
     [SerializeField] private float checkpointCompleteThreshold = 1.1f;

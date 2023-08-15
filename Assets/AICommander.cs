@@ -55,7 +55,7 @@ public class AICommander : MonoBehaviour
     {
         if (agent.selected)
         {
-            agent.actionQueue.Enqueue(actionType);
+            agent.actionQueue.Add(actionType);
         }
 
         // Basic FSM. Find a better way to do this soon.
@@ -71,7 +71,7 @@ public class AICommander : MonoBehaviour
         if (agent.selected)
         {
             agent.actionQueue.Clear();
-            agent.actionQueue.Enqueue(actionType);
+            agent.actionQueue.Add(actionType);
         }
 
         // Basic FSM. Find a better way to do this soon.
